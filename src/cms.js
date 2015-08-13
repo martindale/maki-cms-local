@@ -10,7 +10,8 @@ function CMS(options) {
 
   self.config = {
     base: options.base || '/pages',
-    path: options.path || process.env.PWD + '/pages'
+    path: options.path ? process.env.PWD + options.path : process.env.PWD + '/pages',
+    view: options.view || __dirname + '/../views/page.jade'
   };
   self.extends = {
     services: {
@@ -19,13 +20,21 @@ function CMS(options) {
           return next();
         },
         setup: function(maki) {
-          maki.app.use(self.config.base + '/:filePath', function(req, res, next) {
-            var localPath = self.config.path + '/' + req.param('filePath') + '.md';
-            if (!fs.existsSync(localPath)) {
+          maki.app.use(self.config.base + '/:filePath?', function(req, res, next) {
+            var filePath = req.param('filePath');
+            var indexPath = self.config.path + '/index.md';
+            var localPath = self.config.path + '/' + filePath + '.md';
+
+            var path;
+            if (fs.existsSync(localPath)) {
+              path = localPath;
+            } else if (fs.existsSync(indexPath)) {
+              path = indexPath;
+            } else {
               return next();
             }
 
-            var input = fs.readFileSync(localPath);
+            var input = fs.readFileSync(path);
             var front = frontMatter.loadFront(input);
             var rendered = marked(front.__content);
 
@@ -34,7 +43,9 @@ function CMS(options) {
                 res.send(front);
               },
               html: function() {
-                res.send(rendered);
+                res.render(self.config.view, {
+                  content: rendered
+                });
               }
             });
           });
