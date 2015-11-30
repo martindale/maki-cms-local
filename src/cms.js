@@ -44,7 +44,8 @@ function CMS(options) {
               },
               html: function() {
                 res.render(self.config.view, {
-                  content: rendered
+                  content: rendered,
+                  metadata: front
                 });
               }
             });
