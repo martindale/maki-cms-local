@@ -1,6 +1,6 @@
 {
   "name": "maki-cms-local",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "basic CMS using markdown for maki",
   "main": "index.js",
   "scripts": {

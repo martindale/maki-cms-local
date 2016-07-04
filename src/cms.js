@@ -60,12 +60,14 @@ function CMS(options) {
 
                 var locals = {
                   content: rendered,
+                  metadata: front,
                   page: front
                 };
 
                 locals = _.extend(locals, front);
 
                 res.render(self.config.view, locals);
+
               }
             });
           });
