@@ -2,6 +2,8 @@ var fs = require('fs');
 var marked = require('marked');
 var frontMatter = require('yaml-front-matter');
 
+var _ = require('lodash');
+
 function CMS(options) {
   var self = this;
   if (!options) {
@@ -13,6 +15,15 @@ function CMS(options) {
     path: options.path ? process.env.PWD + options.path : process.env.PWD + '/pages',
     view: options.view || __dirname + '/../views/page.jade'
   };
+  self.provides = {
+    Page: {
+      internal: true,
+      attributes: {
+        name: { type: String , required: true , slug: true },
+        content: { type: String }
+      }
+    }
+  };
   self.extends = {
     services: {
       http: {
@@ -20,7 +31,10 @@ function CMS(options) {
           return next();
         },
         setup: function(maki) {
-          maki.app.use(self.config.base + '/:filePath?', function(req, res, next) {
+          var route = self.config.base + '/:filePath?';
+          maki.routes[route] = 'Page';
+
+          maki.app.use(route, function(req, res, next) {
             var filePath = req.param('filePath');
             var indexPath = self.config.path + '/index.md';
             var localPath = self.config.path + '/' + filePath + '.md';
@@ -43,9 +57,15 @@ function CMS(options) {
                 res.send(front);
               },
               html: function() {
-                res.render(self.config.view, {
-                  content: rendered
-                });
+
+                var locals = {
+                  content: rendered,
+                  page: front
+                };
+
+                locals = _.extend(locals, front);
+
+                res.render(self.config.view, locals);
               }
             });
           });

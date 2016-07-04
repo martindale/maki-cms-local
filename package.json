@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/martindale/maki-cms-local",
   "dependencies": {
+    "lodash": "^4.13.1",
     "marked": "^0.3.5",
     "yaml-front-matter": "^3.2.3"
   },

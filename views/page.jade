@@ -1,4 +1,28 @@
 extends {process.env.PWD + '/views/layouts/default'}
 
+block masthead
+  - if (page && page.masthead)
+    style.
+      .masthead {
+        background: url('#{page.masthead}');
+      }
+  
+  if (page.edit)
+    .ui.card(style="float:right; margin: 0;")
+      .content
+        .right.floated.meta
+          a.ui.mini.button(href="#{page.edit}")
+            i.icon.pencil
+            | edit
+        .header Improve This
+        .description Have a suggestion?  This content is open-source, so lend a hand!
+
+  if (page.title)
+    h2 #{page.title}
+  if (page.image)
+    img.ui.image.right.floated.small(src="#{page.image}")
+  if (page.description)
+    h3 #{page.description}
+
 block content
-  #page-content !{content}
+  .ui.text.container !{content}
