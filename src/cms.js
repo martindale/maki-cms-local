@@ -17,6 +17,7 @@ function CMS(options) {
   };
   self.provides = {
     Page: {
+      public: false,
       internal: true,
       attributes: {
         name: { type: String , required: true , slug: true },
